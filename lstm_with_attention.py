@@ -59,15 +59,15 @@ def attention_lstm(inputs):
         a = Lambda(lambda x: K.mean(x, axis=1), name='dim_reduction')(a)
         a = RepeatVector(input_dim)(a)
     a_probs = Permute((2, 1), name='attention_vec')(a)
-    mul = multiply([inputs, a_probs])
-    return mul
+    attention_m = multiply([inputs, a_probs])
+    return attention_m
 
 #network
 input = Input(batch_shape=(batch_size,time_steps,features), name='input', dtype='float32')
 lstm_layer1 = Bidirectional(LSTM(units=4*int(time_steps*2/3+1), return_sequences=True, return_state=False, stateful=stateful)) (input)
-mul = attention_lstm(lstm_layer1)
-mul = Flatten()(mul)   
-output = Dense(units=1) (mul)
+attention_m = attention_lstm(lstm_layer1)
+attention_m = Flatten()(attention_m)   
+output = Dense(units=1) (attention_m)
 
 #optimizer
 optimizer = RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
