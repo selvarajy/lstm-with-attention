@@ -64,7 +64,7 @@ def attention_lstm(inputs):
 
 #network
 input = Input(batch_shape=(batch_size,time_steps,features), name='input', dtype='float32')
-lstm_layer1 = Bidirectional(LSTM(units=4*int(time_steps*2/3+1), return_sequences=True, return_state=False, stateful=stateful)) (input)
+lstm_layer1 = Bidirectional(LSTM(units=20), return_sequences=True, return_state=False, stateful=stateful)) (input)
 attention_m = attention_lstm(lstm_layer1)
 attention_m = Flatten()(attention_m)   
 output = Dense(units=1) (attention_m)
