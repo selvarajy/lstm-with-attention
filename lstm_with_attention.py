@@ -1,3 +1,4 @@
+import keras.backend as K
 import pandas as pd
 import matplotlib.pyplot as plt
 from keras.layers import Input, LSTM, multiply,Bidirectional
@@ -31,6 +32,10 @@ def create_dataset(data, time_steps = 1):
         X.append(data[i:(i+time_steps),0])
         Y.append(data[(i+time_steps),0])
     return np.array(X),np.array(Y)
+
+#rmse
+def rmse(y_true, y_pred):
+    return K.sqrt(K.mean(K.square(y_pred - y_true), axis=-1))
 
 data = pd.read_excel('data.xlsx')
 
@@ -72,16 +77,16 @@ output = Dense(units=1) (attention_m)
 #optimizer
 optimizer = RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
 model = Model(inputs = input, outputs = output)
-model.compile(optimizer= optimizer, loss='mean_squared_error', metrics=['accuracy'])
+model.compile(optimizer= optimizer, loss='mean_squared_error', metrics=[rmse])
 history = model.fit(trainX, trainY, batch_size=batch_size, epochs=4000, verbose=2, validation_split=0.2, shuffle=not(stateful), callbacks=[ResetCallback()])
 
 # list all data in history
 print(history.history.keys())
 # summarize history for accuracy
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
+plt.plot(history.history['rmse'])
+plt.plot(history.history['val_rmse'])
+plt.title('model rmse')
+plt.ylabel('rmse')
 plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
 plt.show()
